@@ -1,0 +1,42 @@
+[tool.poetry]
+name = "alfbot"
+version = "0.1.0"
+description = "Spawns new bot using its token"
+authors = ["Artem <dragster1001@yandex.ru>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = {extras = ["all"], version = "^0.103.2"}
+uvicorn = {extras = ["standart"], version = "^0.23.2"}
+httpx = "^0.25.0"
+aiogram = "^3.1.1"
+contextvars = "^2.4"
+pydantic-settings = "^2.0.3"
+sqlalchemy = "^2.0.21"
+pyjwt = "^2.8.0"
+redis = "^5.0.1"
+asyncpg = "^0.28.0"
+isort = "^5.12.0"
+black = "^23.9.1"
+alembic = "^1.12.0"
+environs = "^9.5.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+# Добавил сам
+
+[tool.black]
+line-length = 130
+target-version = ['py310']
+extend-exclude = '''
+  .*/migrations/*.
+'''
+
+[tool.isort]
+profile = "black"
+skip_glob = "**/migrations/**"
