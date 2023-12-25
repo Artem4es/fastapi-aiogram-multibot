@@ -22,7 +22,7 @@ async def lifespan(app: FastAPI):
     """Start bot app as a task. Activate main bot on first app start"""
     async for db_session in get_async_session():
         if not await db_bot_exists(settings.main_bot_token, db_session):
-            main_bot_data = BotData(token=settings.main_bot_token, assistant_id=settings.main_bot_assistant_id)
+            main_bot_data = BotData(token=settings.main_bot_token, name=settings.main_bot_name)
             await add_db_bot(main_bot_data, db_session)
 
     bot_app: web.Application = main()
