@@ -8,6 +8,8 @@ services:
     ports:
       - "6380:6379"
     image: redis:6.2.6
+    volumes:
+      - redis_data:/data
     networks:
       - home
 
@@ -19,6 +21,8 @@ services:
     ports:
       - "5432:5432"
     image: postgres:15
+    volumes:
+      - db_data:/var/lib/postgresql/data/
     networks:
       - home
 
@@ -57,3 +61,7 @@ services:
 
 networks:
   home: {}
+
+volumes:
+  db_data:
+  redis_data:

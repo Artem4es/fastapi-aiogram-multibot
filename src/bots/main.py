@@ -68,7 +68,6 @@ if __name__ == "__main__":
 
     except Exception as e:
         logger.error(e, exc_info=True)
-        raise e
 
     finally:
         logger.info("Bot app has been STOPPED.")

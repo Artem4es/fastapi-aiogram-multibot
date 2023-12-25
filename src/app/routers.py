@@ -1,5 +1,6 @@
 import logging
 from http import HTTPStatus
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -16,12 +17,13 @@ logger = logging.getLogger(__name__)
 
 
 @router.post("/activate_bot", status_code=HTTPStatus.CREATED, name="Activate new bot in TG", responses=activate_bot_resp)
-async def activate_bot(bot_data: BotData, db_session: AsyncSession = Depends(get_async_session)) -> BotActivateResponse:
-    """Activate new tg bot using token and Alf assistant id"""
+async def activate_bot(bot_data: BotData, db_session: Annotated[AsyncSession, Depends(get_async_session)]) -> BotActivateResponse:
+    """Activate new tg bot using token"""
     try:
         if not await db_bot_exists(bot_data.token, db_session):
             await create_new_bot(bot_data, db_session)
-            return BotActivateResponse(assistant_id=bot_data.assistant_id, status=Status.ACTIVATED)
+            return BotActivateResponse(status=Status.ACTIVATED)
+
         raise HTTPException(
             status_code=HTTPStatus.CONFLICT, detail={"status": Status.ERROR, "reason": "Bot with this token is already activated"}
         )

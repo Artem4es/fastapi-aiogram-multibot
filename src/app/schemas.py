@@ -1,6 +1,6 @@
 from enum import Enum
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class Status(str, Enum):
@@ -8,11 +8,17 @@ class Status(str, Enum):
     ERROR = "Error"
 
 
+class OpenAIEngine(str, Enum):
+    GPT_35_TURBO = "gpt-3.5-turbo"
+
+
 class BotData(BaseModel):
     token: str
-    assistant_id: int
+    name: str
+    prompt: str = ''
+    engine: OpenAIEngine = OpenAIEngine.GPT_35_TURBO
+    temperature: float = Field(ge=0, le=1, default=0)
 
 
 class BotActivateResponse(BaseModel):
-    assistant_id: int
     status: Status

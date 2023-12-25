@@ -1,6 +1,5 @@
 import asyncio
 import logging
-from typing import Optional
 
 from aiogram import Router
 from aiogram.filters import Command, CommandStart
@@ -15,10 +14,10 @@ from src.bots.core.questions import (
 from src.bots.phrases import BotPhrases
 from src.bots.services import (
     get_key_data,
-    process_question,
-    set_user_data,
+    reset_context,
     update_context,
 )
+from src.openai_app.services import process_question
 from src.config import Settings
 
 question_key_builder = QuestionKeyBuilder()
@@ -42,7 +41,7 @@ async def start(message: Message, state: FSMContext) -> None:
     bot_id, chat_id, user_id = get_key_data(message)
     key: str = question_manager.build_key(bot_id, chat_id, user_id)
     if not user_data:
-        await set_user_data(bot_id, state)
+        await reset_context(bot_id, state)
 
     if not question_manager.question_pending(key):
         await message.answer(text=BotPhrases.hello(message.from_user.first_name))
@@ -65,7 +64,7 @@ async def refresh_history(message: Message, state: FSMContext) -> None:
 
         else:
             if not question_manager.question_pending(key):
-                await state.update_data(current_chat=dict(uid=None, context=None))
+                await reset_context(bot_id, state)
                 await message.answer(text=BotPhrases.CONTEXT_CLEANED)
 
             else:
@@ -75,7 +74,6 @@ async def refresh_history(message: Message, state: FSMContext) -> None:
     except Exception as e:
         logger.error(e, exc_info=True)
         await message.answer(text=BotPhrases.TRY_AGAIN)
-        raise e
 
 
 @multi_bot_router.message()
@@ -84,33 +82,24 @@ async def user_question(message: Message, state: FSMContext) -> None:
     """User asked something"""
     try:
         user_data: dict = await state.get_data()
-
+        context: list[dict] = user_data.get('context')
         bot_id, chat_id, user_id = get_key_data(message)
-        if not user_data:
-            await set_user_data(bot_id, state)
-            user_data = await state.get_data()
+        if not context:
+            await reset_context(bot_id, state)
+            user_data: dict = await state.get_data()
+            context = user_data['context']
 
         question: str = message.text
-        current_chat: dict = user_data.get("current_chat")
-        chat_uid: Optional[str] = current_chat.get("uid")
-        context: Optional[str] = current_chat.get("context")
-        assistant_id: int = user_data.get("assistant_id")
-
         question_key: str = question_manager.build_key(bot_id, chat_id, user_id)
         if not question_manager.question_pending(question_key):
             with question_manager.add_question(question_key):
-                task = asyncio.create_task(
-                    process_question(
-                        question=question, bot_id=bot_id, context=context, alf_assistant_id=assistant_id, chat_uid=chat_uid
-                    )
-                )
+                task = asyncio.create_task(process_question(question=question, context=context))
                 while not task.done():
                     await message.chat.do(action="typing")
                     await asyncio.sleep(settings.typing_action_duration)
 
-                resp: dict = task.result()
-                await update_context(state, resp, question)
-                answer: str = resp["answer"]
+                answer: str = task.result()
+                await update_context(state, answer, question)
                 await message.answer(text=answer)
 
         else:
@@ -120,7 +109,6 @@ async def user_question(message: Message, state: FSMContext) -> None:
     except Exception as e:
         logger.error(e, exc_info=True)
         await message.answer(text=BotPhrases.TRY_AGAIN)
-        raise e
 
 
 @multi_bot_router.callback_query()

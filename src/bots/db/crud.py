@@ -1,3 +1,4 @@
+import logging
 from typing import Optional
 
 from sqlalchemy import select
@@ -7,6 +8,7 @@ from src.app.schemas import BotData
 from src.bots.db.database import async_session_maker
 from src.bots.db.models import BotORM
 
+logger = logging.getLogger(__name__)
 
 
 async def get_db_bots(db_session: Optional[AsyncSession] = None) -> list[BotORM]:
