@@ -20,9 +20,14 @@ if config.config_file_name is not None:
 # target_metadata = mymodel.Base.metadata
 
 
-from src.bots.db.models import *
+from src.bots.db.models import Base
+from src.config import Settings
+
 target_metadata = Base.metadata
 
+settings = Settings()
+
+config.set_main_option("sqlalchemy.url", settings.async_db_url)
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
 # my_important_option = config.get_main_option("my_important_option")

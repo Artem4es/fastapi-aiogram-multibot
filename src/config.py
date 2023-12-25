@@ -32,3 +32,7 @@ class Settings(BaseSettings):
     gpt_token_limit: int
     typing_action_duration: int
     model_config = SettingsConfigDict(env_file=".env")
+
+    @property
+    def async_db_url(self):
+        return f"postgresql+asyncpg://{self.db_user}:{self.db_password}@{self.db_host}:{self.db_port}/{self.db_name}?async_fallback=True"
