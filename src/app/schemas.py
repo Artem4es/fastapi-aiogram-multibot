@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field
 
 class Status(str, Enum):
     ACTIVATED = "Activated"
+    DELETED = "Deleted"
     ERROR = "Error"
 
 
@@ -12,8 +13,11 @@ class OpenAIEngine(str, Enum):
     GPT_35_TURBO = "gpt-3.5-turbo"
 
 
-class BotData(BaseModel):
+class BaseBotData(BaseModel):
     token: str
+
+
+class BotData(BaseBotData):
     name: str
     prompt: str = ''
     engine: OpenAIEngine = OpenAIEngine.GPT_35_TURBO
@@ -21,4 +25,7 @@ class BotData(BaseModel):
 
 
 class BotActivateResponse(BaseModel):
+    status: Status
+
+class BotDeleteResponse(BaseModel):
     status: Status

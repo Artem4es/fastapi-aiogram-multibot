@@ -11,6 +11,7 @@ from src.app.schemas import BotData
 from src.bots.db.crud import add_db_bot, db_bot_exists
 from src.bots.db.database import get_async_session
 from src.bots.main import main
+from src.bots.tasks import scheduler
 from src.config import Settings
 
 settings = Settings()
@@ -20,6 +21,7 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Start bot app as a task. Activate main bot on first app start"""
+    scheduler.start()
     async for db_session in get_async_session():
         if not await db_bot_exists(settings.main_bot_token, db_session):
             main_bot_data = BotData(token=settings.main_bot_token, name=settings.main_bot_name)

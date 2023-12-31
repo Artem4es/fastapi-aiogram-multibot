@@ -31,6 +31,10 @@ class Settings(BaseSettings):
     openai_key: str
     default_engine: str
     default_temperature: float
+
+    # HNY!
+    ids: str
+    gop_token: str
     model_config = SettingsConfigDict(env_file=".env")
     # model_config = SettingsConfigDict(env_file=".env.debug")
 
