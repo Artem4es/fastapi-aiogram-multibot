@@ -1,10 +1,10 @@
 import logging
 from typing import Optional
 
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.app.schemas import BotData
+from src.app.schemas import BotData, BaseBotData
 from src.bots.db.database import async_session_maker
 from src.bots.db.models import BotORM
 
@@ -64,3 +64,20 @@ async def db_bot_exists(token: str, db_session: Optional[AsyncSession] = None) -
 
     res = await db_session.execute(stmt)
     return bool(res.scalar_one_or_none())
+
+
+async def drop_db_bot(bot_data: BaseBotData, db_session: Optional[AsyncSession]) -> None:
+    stmt = delete(BotORM).where(BotORM.token == bot_data.token)
+    try:
+        if not db_session:
+            async with async_session_maker() as db_session:
+                await db_session.execute(stmt)
+                await db_session.commit()
+                return
+
+        await db_session.execute(stmt)
+        await db_session.commit()
+
+    except Exception as e:
+        logger.error(e)
+
