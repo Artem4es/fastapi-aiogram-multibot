@@ -1,10 +1,10 @@
 import logging
 from typing import Optional
 
-from sqlalchemy import select, delete
+from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.app.schemas import BotData, BaseBotData
+from src.app.schemas import BaseBotData, BotData
 from src.bots.db.database import async_session_maker
 from src.bots.db.models import BotORM
 
@@ -80,4 +80,3 @@ async def drop_db_bot(bot_data: BaseBotData, db_session: Optional[AsyncSession])
 
     except Exception as e:
         logger.error(e)
-

@@ -1,6 +1,6 @@
 import logging
 from http import HTTPStatus
-from typing import Annotated
+from typing import Annotated, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.app.responses import activate_bot_resp, delete_bot_resp
 from src.app.schemas import BotActivateResponse, BotData, Status, BaseBotData, BotDeleteResponse
 from src.app.services import create_new_bot
+from src.bots.core.managers import redis_storage_deletion_manager
 from src.bots.db.crud import db_bot_exists, drop_db_bot
 from src.bots.db.database import get_async_session
 
@@ -42,4 +43,6 @@ async def drop_bot(bot_data: BaseBotData, db_session: Annotated[AsyncSession, De
         raise HTTPException(status_code=HTTPStatus.UNPROCESSABLE_ENTITY, detail={"status": Status.ERROR, "reason": "Bot with this token doesn't exist"})
 
     await drop_db_bot(bot_data, db_session)
+    bot_tg_id: str = bot_data.token.split(':')[0]
+    await redis_storage_deletion_manager.find_and_delete_keys(bot_tg_id)
     return BotDeleteResponse(status=Status.DELETED)

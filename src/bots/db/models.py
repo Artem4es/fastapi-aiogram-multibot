@@ -1,8 +1,8 @@
 from datetime import datetime
 from typing import Annotated
 
-from sqlalchemy import text, BigInteger, DateTime
-from sqlalchemy.orm import mapped_column, Mapped
+from sqlalchemy import BigInteger, DateTime, text
+from sqlalchemy.orm import Mapped, mapped_column
 
 from src.bots.db.database import Base
 from src.config import Settings
