@@ -14,4 +14,4 @@ class BotPhrases(str, Enum):
     @staticmethod
     def hello(user_name: str) -> str:
         """Hello phrase after changing assistant"""
-        return f"Привет, {user_name}! Чем могу помочь?"
+        return f"Здорова, {user_name}! Чё, как оно?"

@@ -7,18 +7,13 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
 from src.bots.core.questions import (
-    PendingQuestionManager,
     QuestionKeyBuilder,
-    SetStorage,
+    SetStorage, PendingQuestionManager,
 )
 from src.bots.phrases import BotPhrases
-from src.bots.services import (
-    get_key_data,
-    reset_context,
-    update_context,
-)
-from src.openai_app.services import process_question
+from src.bots.services import get_key_data, reset_context, update_context
 from src.config import Settings
+from src.openai_app.services import process_question
 
 question_key_builder = QuestionKeyBuilder()
 question_key_storage = SetStorage()
@@ -82,12 +77,12 @@ async def user_question(message: Message, state: FSMContext) -> None:
     """User asked something"""
     try:
         user_data: dict = await state.get_data()
-        context: list[dict] = user_data.get('context')
+        context: list[dict] = user_data.get("context")
         bot_id, chat_id, user_id = get_key_data(message)
         if not context:
             await reset_context(bot_id, state)
             user_data: dict = await state.get_data()
-            context = user_data['context']
+            context = user_data["context"]
 
         question: str = message.text
         question_key: str = question_manager.build_key(bot_id, chat_id, user_id)
@@ -100,6 +95,7 @@ async def user_question(message: Message, state: FSMContext) -> None:
 
                 answer: str = task.result()
                 await update_context(state, answer, question)
+
                 await message.answer(text=answer)
 
         else:

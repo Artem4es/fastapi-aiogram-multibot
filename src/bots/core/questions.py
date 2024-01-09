@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from contextlib import contextmanager
 from dataclasses import dataclass
 
-from src.bots.exceptions.exceptions import AnotherQuestionProcessing, StorageError
+from src.bots.exceptions.exceptions import StorageError, AnotherQuestionProcessing
 
 
 @dataclass(frozen=True)
@@ -45,7 +45,7 @@ class BasicStorage(ABC):
 
 
 class QuestionKeyBuilder(BasicKeyBuilder):
-    def __init__(self, delimiter=":"):
+    def __init__(self, delimiter: str = ":"):
         self.delimiter = delimiter
 
     def build(self, key: DefaultKey) -> str:
@@ -65,6 +65,7 @@ class SetStorage(BasicStorage):
     def add(self, value) -> None:
         if value not in self.storage:
             self.storage.add(value)
+
         else:
             raise StorageError(f"{value} is already in {self.storage}!")
 

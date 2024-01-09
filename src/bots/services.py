@@ -6,7 +6,7 @@ from aiogram.types import Message
 
 from src.bots.db.crud import get_current_bot
 from src.bots.db.models import BotORM
-
+from src.bots.phrases import BotPhrases
 from src.config import Settings
 
 logger = logging.getLogger(__name__)
@@ -18,10 +18,13 @@ async def update_context(state: FSMContext, answer: str, question: str) -> None:
     """Update context in current chat"""
     user_data: dict = await state.get_data()
     context: list[dict] = user_data["context"]
-    user_message = {'role': 'user', 'content': question}
-    gpt_answer = {'role': 'assistant', 'content': answer}
+    user_message = {"role": "user", "content": question}
+    gpt_answer = {"role": "assistant", "content": answer}
     context.append(user_message)
-    context.append(gpt_answer)
+    if answer is not None:
+        if not any(phrase.value == answer for phrase in BotPhrases):
+            context.append(gpt_answer)
+
     await state.update_data(context=context)
 
 
