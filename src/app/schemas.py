@@ -19,13 +19,14 @@ class BaseBotData(BaseModel):
 
 class BotData(BaseBotData):
     name: str
-    prompt: str = ''
+    prompt: str = ""
     engine: OpenAIEngine = OpenAIEngine.GPT_35_TURBO
     temperature: float = Field(ge=0, le=1, default=0)
 
 
 class BotActivateResponse(BaseModel):
     status: Status
+
 
 class BotDeleteResponse(BaseModel):
     status: Status

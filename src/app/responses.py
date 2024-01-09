@@ -27,8 +27,7 @@ delete_bot_resp = {
     422: {
         "description": "Bot with given token doesn't exist",
         "content": {
-            "application/json": {
-                "example": {"detail": {"status": Status.ERROR, "reason": "Bot with this token doesn't exist"}}}},
-    }
+            "application/json": {"example": {"detail": {"status": Status.ERROR, "reason": "Bot with this token doesn't exist"}}}
+        },
+    },
 }
-
