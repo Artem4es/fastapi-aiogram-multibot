@@ -16,7 +16,7 @@ class RedisStorageDeletionKeyManager:
 
     async def find_keys(self, bot_key_pattern: str) -> list:
         """Search for keys using pattern"""
-        cursor: int = 1
+        cursor = "0"
         found_keys = list()
         while cursor != 0:
             cursor, keys = await self.redis_client.scan(cursor=cursor, match=bot_key_pattern, count=100)
