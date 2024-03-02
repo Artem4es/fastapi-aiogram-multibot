@@ -24,6 +24,7 @@ class Settings(BaseSettings):
     bot_server_host: str
     bot_server_port: int
     other_bots_path: str
+    parse_mode: str
 
     gpt_token_limit: int
     typing_action_duration: int
@@ -35,8 +36,8 @@ class Settings(BaseSettings):
     # HNY!
     ids: str
     gop_token: str
-    model_config = SettingsConfigDict(env_file=".env")
-    # model_config = SettingsConfigDict(env_file=".env.debug")
+    # model_config = SettingsConfigDict(env_file=".env")
+    model_config = SettingsConfigDict(env_file=".env.debug")
 
     @property
     def async_db_url(self):
