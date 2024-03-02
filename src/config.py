@@ -36,8 +36,8 @@ class Settings(BaseSettings):
     # HNY!
     ids: str
     gop_token: str
-    # model_config = SettingsConfigDict(env_file=".env")
-    model_config = SettingsConfigDict(env_file=".env.debug")
+    model_config = SettingsConfigDict(env_file=".env")
+    # model_config = SettingsConfigDict(env_file=".env.debug")
 
     @property
     def async_db_url(self):
