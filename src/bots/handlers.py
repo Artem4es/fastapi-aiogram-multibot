@@ -85,6 +85,9 @@ async def user_question(message: Message, state: FSMContext) -> None:
             context = user_data["context"]
 
         question: str = message.text
+        if question is None:  # needed for adding/drop and other unexpected actions group member handling
+            return
+
         question_key: str = question_manager.build_key(bot_id, chat_id, user_id)
         if not question_manager.question_pending(question_key):
             with question_manager.add_question(question_key):
@@ -96,7 +99,7 @@ async def user_question(message: Message, state: FSMContext) -> None:
                 answer: str = task.result()
                 await update_context(state, answer, question)
 
-                await message.answer(text=answer)
+                await message.answer(text=answer, parse_mode=settings.parse_mode)
 
         else:
             await message.answer(text=BotPhrases.WAIT_PREVIOUS_QUESTION)
