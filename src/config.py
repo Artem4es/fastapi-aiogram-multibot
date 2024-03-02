@@ -24,6 +24,7 @@ class Settings(BaseSettings):
     bot_server_host: str
     bot_server_port: int
     other_bots_path: str
+    parse_mode: str
 
     gpt_token_limit: int
     typing_action_duration: int
