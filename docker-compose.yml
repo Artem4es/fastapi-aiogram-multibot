@@ -13,7 +13,7 @@ services:
     networks:
       - home
 
-  alf-bot-postges:
+  alf-bot-postgres:
     container_name: alf-bot-postgres
     hostname: alf-bot-redis
     environment:
@@ -39,7 +39,7 @@ services:
       - ./src/app/logs/:/alfbot/src/app/logs/
     depends_on:
       - alf-bot-redis
-      - alf-bot-postges
+      - alf-bot-postgres
     networks:
       - home
 
